@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-class CalculatorTest {
+public class CalculatorTest {
 
   @Test
   void plus() {
