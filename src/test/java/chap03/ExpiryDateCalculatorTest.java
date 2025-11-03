@@ -114,4 +114,48 @@ class ExpiryDateCalculatorTest {
     assertExpiryDate(payData3, LocalDate.of(2019, 7, 31));
   }
 
+  /**
+   * 쉬운 테스트부터 해보라.
+   * 이번에 추가할 사례는 다음과 같다.
+   * 2만 원을 지불하면 만료일이 두 달 뒤가 된다.
+   * 3만 원을 지불하면 만료일이 세 달 뒤가 된다.
+   */
+  @Test
+  void 이만원_이상_납부하면_비례해서_만료일_계산() {
+    PayData payData = PayData.builder()
+        .billingDate(LocalDate.of(2019, 3, 1))
+        .payAmount(20_000)
+        .build();
+
+    assertExpiryDate(payData, LocalDate.of(2019, 5, 1));
+
+    PayData payData2 = PayData.builder()
+        .billingDate(LocalDate.of(2019, 3, 1))
+        .payAmount(30_000)
+        .build();
+
+    assertExpiryDate(payData2, LocalDate.of(2019, 6, 1));
+  }
+
+  @Test
+  void 첫_납부일과_만료일_일자가_다를때_이만원_이상_납부() {
+    PayData payData = PayData.builder()
+        .firstBillingDate(LocalDate.of(2019, 1, 31))
+        .billingDate(LocalDate.of(2019, 2, 28))
+        .payAmount(20_000)
+        .build();
+
+    /*
+    * 2월 28일에 2만원 납부 -> 4월 28일 (A)
+    * 첫 납부일 일자 기준으로 변경 -> 4월 31일 (B)
+    * 4월에는 31일이 없음 -> 4월 말일로 변경 -> 4월 30일 (C)
+    * 따라서 (A)의 말일이 4월의 말일보다 크다면 4월의 말일로 수정해주는 작업이 필요
+    * 판단 기준은 후보 만료일의 월 최대 일수 < 첫 납부일의 일(day)인 경우
+    * 첫 납부일의 일(day)을 후보 만료일의 월 최대 일수로 수정해야 함
+    * e.g. 월 최대 일수(4월의 말일은 30일) < 첫 납부일의 일(31일) 이므로 31을 30으로 수정해주는 작업이 필요
+    * */
+
+    assertExpiryDate(payData, LocalDate.of(2019, 4, 30));
+  }
+
 }
