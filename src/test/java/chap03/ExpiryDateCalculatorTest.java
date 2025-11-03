@@ -95,7 +95,8 @@ class ExpiryDateCalculatorTest {
         .payAmount(10_000)
         .build();
 
-    assertExpiryDate(payData, LocalDate.of(2019, 3, 31));
+    LocalDate expectedExpiryDate1 = LocalDate.of(2019, 3, 31);
+    assertExpiryDate(payData, expectedExpiryDate1);
 
     PayData payData2 = PayData.builder()
         .firstBillingDate(LocalDate.of(2019, 1, 30))
@@ -103,7 +104,8 @@ class ExpiryDateCalculatorTest {
         .payAmount(10_000)
         .build();
 
-    assertExpiryDate(payData2, LocalDate.of(2019, 3, 30));
+    LocalDate expectedExpiryDate2 = LocalDate.of(2019, 3, 30);
+    assertExpiryDate(payData2, expectedExpiryDate2);
 
     PayData payData3 = PayData.builder()
         .firstBillingDate(LocalDate.of(2019, 5, 31))
@@ -111,7 +113,8 @@ class ExpiryDateCalculatorTest {
         .payAmount(10_000)
         .build();
 
-    assertExpiryDate(payData3, LocalDate.of(2019, 7, 31));
+    LocalDate expectedExpiryDate = LocalDate.of(2019, 7, 31);
+    assertExpiryDate(payData3, expectedExpiryDate);
   }
 
   /**
@@ -134,7 +137,8 @@ class ExpiryDateCalculatorTest {
         .payAmount(30_000)
         .build();
 
-    assertExpiryDate(payData2, LocalDate.of(2019, 6, 1));
+    LocalDate expectedExpiryDate = LocalDate.of(2019, 6, 1);
+    assertExpiryDate(payData2, expectedExpiryDate);
   }
 
   @Test
@@ -155,7 +159,18 @@ class ExpiryDateCalculatorTest {
     * e.g. 월 최대 일수(4월의 말일은 30일) < 첫 납부일의 일(31일) 이므로 31을 30으로 수정해주는 작업이 필요
     * */
 
-    assertExpiryDate(payData, LocalDate.of(2019, 4, 30));
+    LocalDate expectedExpiryDate = LocalDate.of(2019, 4, 30);
+    assertExpiryDate(payData, expectedExpiryDate);
+  }
+
+  @Test
+  void 십만원을_납부하면_1년_제공() {
+    PayData payData = PayData.builder()
+        .billingDate(LocalDate.of(2019, 1, 28))
+        .payAmount(100_000)
+        .build();
+    LocalDate expectedExpiryDate = LocalDate.of(2020, 1, 28);
+    assertExpiryDate(payData, expectedExpiryDate);
   }
 
 }

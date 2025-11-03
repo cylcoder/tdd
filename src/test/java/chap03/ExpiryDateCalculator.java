@@ -5,13 +5,21 @@ import java.time.YearMonth;
 
 public class ExpiryDateCalculator {
 
+  public static final int YEARLY_PAYMENT_THRESHOLD = 100_000;
+  public static final int YEARLY_BONUS_MONTHS = 12;
+  public static final int MONTHLY_FEE_UNIT = 10_000;
+
   public LocalDate calculateExpiryDate(PayData payData) {
-    int addedMonths = payData.getPayAmount() / 10_000;
+    int addedMonths = calculateAddedMonths(payData.getPayAmount());
     if (payData.getFirstBillingDate() == null) { // 첫 납부일이 없으면
       return payData.getBillingDate().plusMonths(addedMonths);
     } else { // 첫 납부일이 있으면
       return expiryDateUsingFirstBillingDate(payData, addedMonths);
     }
+  }
+
+  private int calculateAddedMonths(int payAmount) {
+    return payAmount == YEARLY_PAYMENT_THRESHOLD ? YEARLY_BONUS_MONTHS : payAmount / MONTHLY_FEE_UNIT;
   }
 
   private LocalDate expiryDateUsingFirstBillingDate(PayData payData, int addedMonths) {
