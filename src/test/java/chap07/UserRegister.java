@@ -8,6 +8,7 @@ public class UserRegister {
 
   private final WeakPasswordChecker weakPasswordChecker;
   private final UserRepository userRepository;
+  private final EmailNotifier emailNotifier;
 
   public void register(String id, String pw, String email) {
     if (weakPasswordChecker.checkPasswordWeak(pw)) {
@@ -20,6 +21,8 @@ public class UserRegister {
     }
 
     userRepository.save(new User(id, pw, email));
+
+    emailNotifier.sendRegisterEmail(email);
   }
 
 }
